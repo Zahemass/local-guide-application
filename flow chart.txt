@@ -33,28 +33,27 @@ flow charts:
 |                   |
 +-------------------+
           |
-          | Record audio story
+          | Record short video story
           V
 +-------------------+
 |                   |
 |  Upload to        |
 | Firebase Storage  |
-|                   |
+| (video file)      |
 +-------------------+
           |
           | Create Firestore doc
-          | with audioUrl,
-          | location, language,
-          | caption=null
+          | with videoUrl,
+          | location, caption=null
           V
 +--------------------------+
 |                          |
 |   Firestore (spots)      |
 |                          |
 | {                        |
-|   audioUrl: "...",       |
+|   videoUrl: "...",       |
 |   caption: null,         |
-|   originalLanguage: "ta" |
+|   originalLanguage: null |
 | }                        |
 +--------------------------+
           |
@@ -66,11 +65,12 @@ flow charts:
 |                               |
 | - Fetch new docs with         |
 |   caption=null                |
-| - Download audio from Storage |
-| - Run Speech-to-Text (Google) |
+| - Downloads video file        |
+| - Runs FFmpeg to extract audio|
+| - Speech-to-Text (Google)     |
 | - Detect language             |
-| - Save transcript back to     |
-|   Firestore caption           |
+| - Saves transcript as caption |
+|   back to Firestore           |
 +-------------------------------+
           |
           | Firestore doc updated
@@ -79,7 +79,7 @@ flow charts:
 |                          |
 | Firestore (updated doc)  |
 | {                        |
-|   audioUrl: "...",       |
+|   videoUrl: "...",       |
 |   caption: "Best chai",  |
 |   originalLanguage: "en" |
 | }                        |
@@ -91,11 +91,12 @@ flow charts:
 |                          |
 |   Flutter loads pin      |
 |                          |
+| - Plays video preview    |
 | - Shows caption          |
 | - Offers TTS:            |
-|    • Play original       |
+|    • Play original lang  |
 |    • Play in selected    |
-|      language (trans)    |
+|      language (via trans)|
 +--------------------------+
           |
           | Calls Node API
@@ -116,39 +117,59 @@ flow charts:
 +--------------------------+
 
 
-✅ 🎯 QUICK LEGEND
+✅ 🎯 UPDATED LEGEND FOR VIDEO FLOW
 ✅ Flutter
 
-Records + Uploads + Plays audio
+Records short videos (15–30 sec local story)
 
-Handles UI, TTS playback
+Uploads to Firebase Storage
+
+Creates Firestore doc with videoUrl
+
+Plays video in story popups
+
+Runs flutter_tts to speak translations.
 
 ✅ Firebase Storage
 
-Stores raw audio files
+Stores raw video files (mp4).
 
 ✅ Firestore
 
-Stores metadata + caption
+Stores metadata:
+
+videoUrl
+
+caption (from speech transcription)
+
+originalLanguage
+
+translatedCaptions
 
 ✅ Node.js server
 
-Periodically or via HTTP trigger:
+Periodically scans Firestore for caption: null
 
-Downloads audio from Storage
+Downloads video from Storage
 
-Transcribes it to text
+Runs FFmpeg to extract audio
 
-Updates Firestore
+Sends audio to Google Speech-to-Text for transcript
 
-Also handles /translate API for on-demand translations.
+Updates Firestore doc with caption & detected language
 
-✅ Google APIs (STT + Translate)
+Exposes /translate endpoint for on-demand multi-language support.
+
+✅ FFmpeg
+
+Converts video ➔ audio .wav for transcription.
+
+✅ Google APIs
 
 Speech-to-Text: audio ➔ text
 
-Translate: text ➔ target language
+Translate: text ➔ other languages.
 
 ✅ flutter_tts
 
-Reads translated text in user’s language.
+Reads translated text out loud in user’s selected language.
