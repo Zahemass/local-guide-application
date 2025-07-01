@@ -4,13 +4,15 @@ DB structureFirestore
 |    |-- spot_abc123 (doc)
 |    |    |-- latitude: 12.97
 |    |    |-- longitude: 77.59
-|    |    |-- audioUrl: "https://..."
+|    |    |-- videoUrl: "https://..."
+|    |    |-- thumbnail: "https://..."
 |    |    |-- caption: "Best Dosa in town"
 |    |    |-- originalLanguage: "en"
 |    |    |-- translatedCaptions: { "ta": "...", "en": "..." }
 |    |    |-- createdBy: { uid, name, photoUrl }
 |    |    |-- createdAt: timestamp
 |    |    |-- listenCount: 17
+|    |    |-- likeCount: 17
 |
 |-- users (collection)
 |    |-- user_abc (doc)
