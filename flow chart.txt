@@ -1,0 +1,152 @@
+DB structureFirestore
+|
+|-- spots (collection)
+|    |-- spot_abc123 (doc)
+|    |    |-- latitude: 12.97
+|    |    |-- longitude: 77.59
+|    |    |-- audioUrl: "https://..."
+|    |    |-- caption: "Best Dosa in town"
+|    |    |-- originalLanguage: "en"
+|    |    |-- translatedCaptions: { "ta": "...", "en": "..." }
+|    |    |-- createdBy: { uid, name, photoUrl }
+|    |    |-- createdAt: timestamp
+|    |    |-- listenCount: 17
+|
+|-- users (collection)
+|    |-- user_abc (doc)
+|    |    |-- uid: "user_abc"
+|    |    |-- name: "Zubair"
+|    |    |-- preferredLanguage: "ta"
+|    |    |-- createdAt: timestamp
+|
+|-- badges (collection)  // optional
+|    |-- user_abc (doc)
+|    |    |-- badges: ["First Story"]
+|    |    |-- lastUpdated: timestamp
+
+flow charts:
++-------------------+
+|                   |
+|    Flutter App    |
+|                   |
++-------------------+
+          |
+          | Record audio story
+          V
++-------------------+
+|                   |
+|  Upload to        |
+| Firebase Storage  |
+|                   |
++-------------------+
+          |
+          | Create Firestore doc
+          | with audioUrl,
+          | location, language,
+          | caption=null
+          V
++--------------------------+
+|                          |
+|   Firestore (spots)      |
+|                          |
+| {                        |
+|   audioUrl: "...",       |
+|   caption: null,         |
+|   originalLanguage: "ta" |
+| }                        |
++--------------------------+
+          |
+          | (trigger or poll)
+          V
++-------------------------------+
+|                               |
+|    Node.js server / cron      |
+|                               |
+| - Fetch new docs with         |
+|   caption=null                |
+| - Download audio from Storage |
+| - Run Speech-to-Text (Google) |
+| - Detect language             |
+| - Save transcript back to     |
+|   Firestore caption           |
++-------------------------------+
+          |
+          | Firestore doc updated
+          V
++--------------------------+
+|                          |
+| Firestore (updated doc)  |
+| {                        |
+|   audioUrl: "...",       |
+|   caption: "Best chai",  |
+|   originalLanguage: "en" |
+| }                        |
++--------------------------+
+          |
+          | When user views
+          V
++--------------------------+
+|                          |
+|   Flutter loads pin      |
+|                          |
+| - Shows caption          |
+| - Offers TTS:            |
+|    • Play original       |
+|    • Play in selected    |
+|      language (trans)    |
++--------------------------+
+          |
+          | Calls Node API
+          | for translation
+          V
++----------------------------+
+|                            |
+| Node.js /translate API     |
+| -> calls Google Translate  |
+| -> returns translated text |
++----------------------------+
+          |
+          V
++--------------------------+
+|                          |
+|   Flutter uses flutter_tts|
+|   to speak in target lang |
++--------------------------+
+
+
+✅ 🎯 QUICK LEGEND
+✅ Flutter
+
+Records + Uploads + Plays audio
+
+Handles UI, TTS playback
+
+✅ Firebase Storage
+
+Stores raw audio files
+
+✅ Firestore
+
+Stores metadata + caption
+
+✅ Node.js server
+
+Periodically or via HTTP trigger:
+
+Downloads audio from Storage
+
+Transcribes it to text
+
+Updates Firestore
+
+Also handles /translate API for on-demand translations.
+
+✅ Google APIs (STT + Translate)
+
+Speech-to-Text: audio ➔ text
+
+Translate: text ➔ target language
+
+✅ flutter_tts
+
+Reads translated text in user’s language.
