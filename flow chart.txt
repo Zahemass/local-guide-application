@@ -11,7 +11,7 @@ DB structureFirestore
 |    |    |-- originalLanguage: "en"
 |    |    |-- translatedCaptions: { "ta": "...", "hi": "..." }
 |    |    |-- categories: ["food", "hidden_gems"]
-|    |    |-- createdBy: { uid, name, photoUrl }
+|    |    |-- createdBy: { uid, name, }
 |    |    |-- createdAt: timestamp
 |    |    |-- listenCount: 17
 |    |    |-- likeCount: 5
