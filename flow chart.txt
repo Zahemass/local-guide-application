@@ -5,14 +5,16 @@ DB structureFirestore
 |    |    |-- latitude: 12.97
 |    |    |-- longitude: 77.59
 |    |    |-- videoUrl: "https://..."
-|    |    |-- thumbnail: "https://..."
+|    |    |-- thumbnailUrl: "https://..."
 |    |    |-- caption: "Best Dosa in town"
+|    |    |-- transcript: "Hidden shop near MG road..."
 |    |    |-- originalLanguage: "en"
-|    |    |-- translatedCaptions: { "ta": "...", "en": "..." }
+|    |    |-- translatedCaptions: { "ta": "...", "hi": "..." }
+|    |    |-- categories: ["food", "hidden_gems"]
 |    |    |-- createdBy: { uid, name, photoUrl }
 |    |    |-- createdAt: timestamp
 |    |    |-- listenCount: 17
-|    |    |-- likeCount: 17
+|    |    |-- likeCount: 5
 |
 |-- users (collection)
 |    |-- user_abc (doc)
@@ -34,17 +36,19 @@ flow charts:
 +-------------------+
           |
           | Record short video story
+          | Choose categories: food, hidden place, history
           V
 +-------------------+
 |                   |
-|  Upload to        |
+|  Upload video to  |
 | Firebase Storage  |
-| (video file)      |
+|                   |
 +-------------------+
           |
           | Create Firestore doc
           | with videoUrl,
-          | location, caption=null
+          | location, categories,
+          | caption=null
           V
 +--------------------------+
 |                          |
@@ -52,6 +56,7 @@ flow charts:
 |                          |
 | {                        |
 |   videoUrl: "...",       |
+|   categories: ["food"],  |
 |   caption: null,         |
 |   originalLanguage: null |
 | }                        |
@@ -63,12 +68,11 @@ flow charts:
 |                               |
 |    Node.js server / cron      |
 |                               |
-| - Fetch new docs with         |
+| - Finds new spots with        |
 |   caption=null                |
 | - Downloads video file        |
 | - Runs FFmpeg to extract audio|
 | - Speech-to-Text (Google)     |
-| - Detect language             |
 | - Saves transcript as caption |
 |   back to Firestore           |
 +-------------------------------+
@@ -81,6 +85,7 @@ flow charts:
 | {                        |
 |   videoUrl: "...",       |
 |   caption: "Best chai",  |
+|   categories: ["food"],  |
 |   originalLanguage: "en" |
 | }                        |
 +--------------------------+
@@ -90,7 +95,7 @@ flow charts:
 +--------------------------+
 |                          |
 |   Flutter loads pin      |
-|                          |
+|   by category filter     |
 | - Plays video preview    |
 | - Shows caption          |
 | - Offers TTS:            |
