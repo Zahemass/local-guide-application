@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 name: crowd_local_lens
+=======
+name: local_lens
+>>>>>>> b6342f831fc382dea66c101ab74520eda15b7f1f
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -19,7 +23,11 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
+<<<<<<< HEAD
   sdk: ^3.7.0
+=======
+  sdk: ^3.5.3
+>>>>>>> b6342f831fc382dea66c101ab74520eda15b7f1f
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -31,6 +39,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> b6342f831fc382dea66c101ab74520eda15b7f1f
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -39,13 +51,20 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   google_fonts: ^4.0.3
+<<<<<<< HEAD
 
+=======
+>>>>>>> b6342f831fc382dea66c101ab74520eda15b7f1f
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
+<<<<<<< HEAD
   flutter_lints: ^5.0.0
+=======
+  flutter_lints: ^4.0.0
+>>>>>>> b6342f831fc382dea66c101ab74520eda15b7f1f
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -59,9 +78,12 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+<<<<<<< HEAD
     - shaders/
   shaders:
       - shaders/liquid_glass_lens.frag
+=======
+>>>>>>> b6342f831fc382dea66c101ab74520eda15b7f1f
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

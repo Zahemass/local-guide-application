@@ -90,12 +90,21 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
+<<<<<<< HEAD
             VALUE "FileDescription", "crowd_local_lens" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "crowd_local_lens" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
             VALUE "OriginalFilename", "crowd_local_lens.exe" "\0"
             VALUE "ProductName", "crowd_local_lens" "\0"
+=======
+            VALUE "FileDescription", "local_lens" "\0"
+            VALUE "FileVersion", VERSION_AS_STRING "\0"
+            VALUE "InternalName", "local_lens" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
+            VALUE "OriginalFilename", "local_lens.exe" "\0"
+            VALUE "ProductName", "local_lens" "\0"
+>>>>>>> b6342f831fc382dea66c101ab74520eda15b7f1f
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

@@ -1,6 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
+<<<<<<< HEAD
         android:label="crowd_local_lens"
+=======
+        android:label="local_lens"
+>>>>>>> b6342f831fc382dea66c101ab74520eda15b7f1f
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

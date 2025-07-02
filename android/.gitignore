@@ -5,7 +5,10 @@ gradle-wrapper.jar
 /gradlew.bat
 /local.properties
 GeneratedPluginRegistrant.java
+<<<<<<< HEAD
 .cxx/
+=======
+>>>>>>> b6342f831fc382dea66c101ab74520eda15b7f1f
 
 # Remember to never publicly share your keystore.
 # See https://flutter.dev/to/reference-keystore
