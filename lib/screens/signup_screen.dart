@@ -3,6 +3,8 @@ import 'package:crowd_local_lens/widgets/liquid_glass_container.dart';
 import 'package:crowd_local_lens/constants/colors.dart';
 import 'login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -24,6 +26,64 @@ class _SignupScreenState extends State<SignupScreen> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  Future<void> signupUser() async {
+    print("📤 Sending signup request...");
+
+    final url = Uri.parse('http://localhost:4000/signup'); // Change IP if needed
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'username': _usernameController.text.trim(),
+          'password': _passwordController.text.trim(),
+        }),
+      );
+
+      print("✅ Response received: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print("🎉 Signup successful: $data");
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Signup successful! Redirecting to login...'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        await Future.delayed(const Duration(seconds: 1)); // Wait before navigating
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => LoginScreen()),
+        );
+      } else {
+        final error = jsonDecode(response.body);
+        print("❌ Signup failed with status ${response.statusCode}");
+        print("❗ Error message: ${error['error']}");
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Signup failed: ${error['error']}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      print("🚨 Exception occurred during signup: $e");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Signup failed: Network error'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -49,12 +109,12 @@ class _SignupScreenState extends State<SignupScreen> {
                   LiquidGlassContainer(
                     width: size.width * 0.9,
                     height: size.width * 0.93,
-                    padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
                     borderRadius: 25,
                     backgroundKey: _backgroundKey,
                     child: SingleChildScrollView(
                       child: _buildFormContent(),
-                    )
+                    ),
                   ),
                   const SizedBox(height: 30),
                   _buildDividerWithText(),
@@ -116,13 +176,19 @@ class _SignupScreenState extends State<SignupScreen> {
         child: TextFormField(
           controller: controller,
           obscureText: isPassword,
+          validator: (value) {
+            if (value == null || value.trim().isEmpty) {
+              return 'Please enter $label';
+            }
+            return null;
+          },
           style: GoogleFonts.montserrat(
             color: Colors.black,
             fontWeight: FontWeight.w500,
           ),
           decoration: InputDecoration(
-            labelText: label,
-            labelStyle: GoogleFonts.montserrat(
+            hintText: label,
+            hintStyle: GoogleFonts.montserrat(
               color: Colors.black54,
               fontWeight: FontWeight.w500,
             ),
@@ -161,7 +227,13 @@ class _SignupScreenState extends State<SignupScreen> {
       child: ElevatedButton(
         onPressed: () {
           if (_formKey.currentState?.validate() ?? false) {
-            // Handle signup
+            if (_passwordController.text != _confirmPasswordController.text) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Passwords do not match')),
+              );
+              return;
+            }
+            signupUser();
           }
         },
         style: ElevatedButton.styleFrom(
@@ -184,22 +256,23 @@ class _SignupScreenState extends State<SignupScreen> {
       ),
     );
   }
+
   Widget _buildDividerWithText() {
     return Row(
       children: [
-        Expanded(child: Divider(color: Colors.white70)),
+        const Expanded(child: Divider(color: Colors.white70)),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Text(
             'or continue with',
-            style: GoogleFonts.montserrat( // Using Montserrat font
+            style: GoogleFonts.montserrat(
               color: Colors.white70,
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
           ),
         ),
-        Expanded(child: Divider(color: Colors.white70)),
+        const Expanded(child: Divider(color: Colors.white70)),
       ],
     );
   }
@@ -240,9 +313,7 @@ class _SignupScreenState extends State<SignupScreen> {
         RichText(
           text: TextSpan(
             text: 'Already have an account ? ',
-            style: GoogleFonts.montserrat(
-              color: Colors.black,
-            ),
+            style: GoogleFonts.montserrat(color: Colors.black),
             children: [
               WidgetSpan(
                 child: GestureDetector(

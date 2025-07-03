@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:crowd_local_lens/widgets/liquid_glass_container.dart';
 import 'package:crowd_local_lens/constants/colors.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,6 +24,65 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordController.dispose();
     super.dispose();
   }
+
+  Future<void> loginUser() async {
+    print("📤 Sending signup request...");
+
+    final url = Uri.parse('http://localhost:4000/login'); // Change IP if needed
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'username': _usernameController.text.trim(),
+          'password': _passwordController.text.trim(),
+        }),
+      );
+
+      print("✅ Response received: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print("🎉 login successful: $data");
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('login successful! Redirecting to login...'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        await Future.delayed(const Duration(seconds: 1)); // Wait before navigating
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => LoginScreen()),
+        );
+      } else {
+        final error = jsonDecode(response.body);
+        print("❌ Signup failed with status ${response.statusCode}");
+        print("❗ Error message: ${error['error']}");
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Signup failed: ${error['error']}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      print("🚨 Exception occurred during signup: $e");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Signup failed: Network error'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -117,8 +178,8 @@ class _LoginScreenState extends State<LoginScreen> {
             fontWeight: FontWeight.w500,
           ),
           decoration: InputDecoration(
-            labelText: label,
-            labelStyle: GoogleFonts.montserrat(
+            hintText : label,
+            hintStyle : GoogleFonts.montserrat(
               color: Colors.black54,
               fontWeight: FontWeight.w500,
             ),
@@ -157,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: ElevatedButton(
         onPressed: () {
           if (_formKey.currentState?.validate() ?? false) {
-            // Handle login
+            loginUser();
           }
         },
         style: ElevatedButton.styleFrom(
