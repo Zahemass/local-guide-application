@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:crowd_local_lens/screens/welcome_page.dart';
+import 'screens/map_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Poppins',
       ),
-      home: const WelcomePage(),
+      home: const MapScreen(),
     );
   }
 }
